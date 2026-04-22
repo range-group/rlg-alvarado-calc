@@ -161,4 +161,889 @@ input[type=range]{width:100%;height:4px;accent-color:var(--blue);cursor:pointer;
 table{width:100%;border-collapse:collapse;}
 th{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 1rem;border-bottom:1.5px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child{text-align:left;}
-td{padding:9px 1rem;border-bottom:1px solid var(--border);font-family:var(--mono);fo
+td{padding:9px 1rem;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12.5px;text-align:right;white-space:nowrap;}
+td:first-child{font-family:var(--sans);font-size:12.5px;text-align:left;font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr.tr-tot td{font-weight:700;border-top:1.5px solid var(--border);border-bottom:none;background:var(--subtle);}
+tr.tr-ex td{background:rgba(26,86,219,.03);}
+
+/* ── SENSITIVITY ─────────────────────────────── */
+.sens-wrap{overflow-x:auto;margin:0 1.25rem .875rem;}
+.sens-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;min-width:400px;}
+.g{color:var(--green);font-weight:600;}
+.a{color:var(--amber);font-weight:600;}
+.r{color:var(--red);font-weight:600;}
+
+/* ── BREAK-EVEN ──────────────────────────────── */
+.be-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.be-cell{padding:1rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+.be-cell:nth-child(2n){border-right:none;}
+.be-cell:nth-child(3),.be-cell:nth-child(4){border-bottom:none;}
+.be-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.be-val{font-family:var(--mono);font-size:18px;font-weight:500;}
+.be-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── COLORS ──────────────────────────────────── */
+.c-green{color:var(--green);}.c-red{color:var(--red);}.c-amber{color:var(--amber);}.c-blue{color:var(--blue);}
+
+/* ── PDF BTN ─────────────────────────────────── */
+.save-btn{display:block;width:calc(100% - 2.5rem);margin:1.5rem 1.25rem 0;padding:15px;font-size:14px;font-weight:700;font-family:var(--sans);border:none;border-radius:14px;background:var(--text);color:#fff;cursor:pointer;letter-spacing:.01em;}
+.save-btn:hover{background:#1a1a1a;}
+.save-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:6px;}
+
+/* ── PRINT ───────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .page{max-width:100%;}
+  .no-print{display:none!important;}
+  .card,.lot-card,.sens-card{border:1px solid #ddd!important;page-break-inside:avoid;}
+  input,.tog,.li-del,.li-add,.save-btn,.save-hint{display:none!important;}
+  .hdr,.kpi-strip,.hero,.sec{page-break-inside:avoid;}
+}
+
+/* ── LOCK SYSTEM ─────────────────────────────── */
+.sec-lock{display:flex;align-items:center;gap:6px;margin-left:6px;cursor:pointer;padding:3px 6px;border-radius:8px;transition:background .15s;flex-shrink:0;border:1px solid transparent;}
+.sec-lock:hover{background:rgba(0,0,0,.04);border-color:var(--border);}
+.lock-icon{font-size:13px;line-height:1;opacity:.7;}
+.lock-badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:100px;transition:all .2s;}
+.lock-badge.unlocked{background:#F0F0F5;color:#87878F;border:1px solid #E2E2EA;}
+.lock-badge.locked{background:#EBF7F3;color:#12916A;border:1px solid #A8E2D0;}
+.section-locked .ir input,.section-locked .ir .tog,.section-locked .ir .sym+input{pointer-events:none;opacity:.6;}
+.section-locked .li input,.section-locked .li-del,.section-locked .li-add{pointer-events:none;opacity:.6;}
+.section-locked .li-del,.section-locked .li-add{display:none;}
+.section-locked{opacity:1;}
+.section-locked .card,.section-locked .lot-card,.section-locked .sens-card{border-color:#C2EAE0;background:#FAFFFE;}
+.section-locked .sec-title{color:#12916A;}
+.section-locked .sec-line{background:#A8E2D0;}
+
+/* ── VIEW MODE TOGGLE ────────────────────────── */
+.view-bar{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--subtle);}
+.view-btn{flex:1;padding:7px 14px;font-size:12px;font-weight:600;font-family:var(--sans);border:none;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.view-btn.active{background:var(--text);color:#fff;}
+
+/* ── LENDER VIEW ─────────────────────────────── */
+.lender-page{display:none;}
+.lender-page.visible{display:block;}
+.calc-page.hidden{display:none;}
+
+.lender-hdr{padding:2rem 1.25rem 1.5rem;}
+.lender-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.lender-deal{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.lender-sub{font-size:13px;color:var(--muted);}
+.lender-date{font-size:11px;color:var(--faint);margin-top:8px;font-family:var(--mono);}
+.lender-divider{height:2px;background:var(--text);margin:0 1.25rem 1.5rem;}
+
+.lender-hero{margin:0 1.25rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.lender-big{background:var(--text);border-radius:16px;padding:1.25rem;color:#fff;grid-column:span 1;}
+.lender-big-label{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
+.lender-big-val{font-family:var(--mono);font-size:32px;font-weight:500;letter-spacing:-.02em;}
+.lender-big-sub{font-size:11px;opacity:.5;margin-top:4px;}
+.lender-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.lender-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.875rem 1rem;}
+.lender-kpi-label{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.lender-kpi-val{font-family:var(--mono);font-size:18px;font-weight:500;}
+
+.lender-sec{padding:1.25rem 1.25rem .5rem;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--border);margin-top:.5rem;}
+.lender-sec:first-of-type{border-top:none;}
+
+.lender-table{width:100%;border-collapse:collapse;margin:0 0 .5rem;}
+.lender-table th{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px 1.25rem;border-bottom:1.5px solid var(--border);text-align:right;}
+.lender-table th:first-child{text-align:left;}
+.lender-table td{padding:9px 1.25rem;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:13px;text-align:right;}
+.lender-table td:first-child{font-family:var(--sans);font-size:13px;text-align:left;color:var(--muted);}
+.lender-table tr:last-child td{border-bottom:none;}
+.lender-table tr.lender-tot td{font-weight:700;border-top:1.5px solid var(--border);background:var(--subtle);}
+
+.lender-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1.25rem .75rem;}
+.lender-metric{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.875rem 1rem;}
+.lender-metric-label{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.lender-metric-val{font-family:var(--mono);font-size:16px;font-weight:500;}
+
+.lender-footer{margin:2rem 1.25rem 1rem;padding:1rem;background:var(--subtle);border-radius:12px;border:1px solid var(--border);}
+.lender-footer p{font-size:11px;color:var(--muted);line-height:1.6;}
+.lender-footer strong{color:var(--text);}
+
+
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="brand-mark">Range <em>Land</em><br><em>Group</em></div>
+    <div class="brand-tag">Alvarado · 10201 CR 107 · Johnson County, TX</div>
+  </div>
+  <div class="hdr-right no-print">
+    <button class="pill primary" onclick="window.print()">&#8595; Save PDF</button>
+    <span class="pill version">v2.1</span>
+  </div>
+</div>
+<div class="hdr-divider"></div>
+
+<div style="padding:.625rem 1.25rem .375rem;" class="no-print"><div class="view-bar"><button class="view-btn active" id="vb-calc" onclick="setView('calc')">Calculator</button><button class="view-btn" id="vb-lender" onclick="setView('lender')">Lender view</button></div></div>
+
+
+<div class="calc-page" id="calc-page">
+<!-- PROFIT HERO -->
+<div class="hero">
+  <div class="hero-label">Net profit — 10 lots</div>
+  <div class="hero-profit" id="h-profit">—</div>
+  <div class="hero-grid">
+    <div class="hero-cell"><div class="hero-cell-label">Revenue</div><div class="hero-cell-val" id="h-rev">—</div><div class="profit-bar-wrap"><div class="profit-bar" id="h-bar" style="width:0%"></div></div></div>
+    <div class="hero-cell"><div class="hero-cell-label">Total cost</div><div class="hero-cell-val" id="h-cost">—</div></div>
+    <div class="hero-cell"><div class="hero-cell-label">Margin</div><div class="hero-cell-val" id="h-margin">—</div></div>
+    <div class="hero-cell"><div class="hero-cell-label">Per lot</div><div class="hero-cell-val" id="h-ppl">—</div></div>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi"><div class="kpi-label">Cash-on-cash</div><div class="kpi-val" id="k-coc">—</div><div class="kpi-sub" id="k-coc-sub">—</div></div>
+  <div class="kpi"><div class="kpi-label">Break-even ARV</div><div class="kpi-val" id="k-be">—</div><div class="kpi-sub" id="k-be-sub">—</div></div>
+  <div class="kpi"><div class="kpi-label">ARV cushion</div><div class="kpi-val" id="k-cushion">—</div><div class="kpi-sub">before break-even</div></div>
+</div>
+
+<!-- DEAL INFO -->
+<div class="sec" id="sec-deal"><span class="sec-title">Deal info</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-deal')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-deal-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="deal-field"><label class="deal-label">Deal name</label><input type="text" placeholder="e.g. Alvarado — 10-lot subdivision"></div>
+  <div class="deal-field"><label class="deal-label">Address</label><input type="text" placeholder="10201 County Road 107, Alvarado, TX 76009"></div>
+  <div class="deal-field"><label class="deal-label">Notes</label><textarea placeholder="Mineral rights, pipeline easements, due diligence..."></textarea></div>
+</div>
+
+<!-- AV -->
+<div class="sec" id="sec-av"><span class="sec-title">AV — Absolute Value</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-av')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-av-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Quantity</div></div><div class="ir-right"><input type="number" class="w-xs" id="av-qty" value="5" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">ARV / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="av-arv" value="399000" step="1000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Home cost / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="av-cost" value="92363" step="100" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Seller concession / unit</div><div class="ir-label-sub">Closing credits + buyer incentives — reduces net revenue</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="av-conc" value="0" step="500" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Sold in-house</div><div class="ir-label-sub">Homes closed without a buyer's agent</div></div><div class="ir-right"><input type="number" class="w-xs" id="av-ih" value="0" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="inforow"><span class="inforow-label">Setup cost / unit</span><span class="inforow-val" id="av-setup-sub">—</span></div>
+  <div class="inforow" style="border-bottom:none;"><span class="inforow-label">AV revenue subtotal</span><span class="inforow-val c-green" id="av-rev-sub">—</span></div>
+</div>
+
+<!-- CHOICE -->
+<div class="sec" id="sec-ch"><span class="sec-title">Choice</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-ch')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-ch-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Quantity</div></div><div class="ir-right"><input type="number" class="w-xs" id="ch-qty" value="4" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">ARV / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="ch-arv" value="385000" step="1000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Home cost / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="ch-cost" value="87311" step="100" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Seller concession / unit</div><div class="ir-label-sub">Closing credits + buyer incentives — reduces net revenue</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="ch-conc" value="0" step="500" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Sold in-house</div><div class="ir-label-sub">Homes closed without a buyer's agent</div></div><div class="ir-right"><input type="number" class="w-xs" id="ch-ih" value="0" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="inforow"><span class="inforow-label">Setup cost / unit</span><span class="inforow-val" id="ch-setup-sub">—</span></div>
+  <div class="inforow" style="border-bottom:none;"><span class="inforow-label">Choice revenue subtotal</span><span class="inforow-val c-green" id="ch-rev-sub">—</span></div>
+</div>
+
+<!-- SOLACE -->
+<div class="sec" id="sec-sol"><span class="sec-title">Solace</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-sol')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-sol-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Quantity</div></div><div class="ir-right"><input type="number" class="w-xs" id="sol-qty" value="0" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">ARV / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="sol-arv" value="420000" step="1000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Home cost / unit</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="sol-cost" value="95000" step="100" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Seller concession / unit</div><div class="ir-label-sub">Closing credits + buyer incentives — reduces net revenue</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="sol-conc" value="0" step="500" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Sold in-house</div><div class="ir-label-sub">Homes closed without a buyer's agent</div></div><div class="ir-right"><input type="number" class="w-xs" id="sol-ih" value="0" min="0" max="10" step="1" oninput="go()"></div></div>
+  <div class="inforow"><span class="inforow-label">Setup cost / unit</span><span class="inforow-val" id="sol-setup-sub">—</span></div>
+  <div class="inforow" style="border-bottom:none;"><span class="inforow-label">Solace revenue subtotal</span><span class="inforow-val c-green" id="sol-rev-sub">—</span></div>
+</div>
+
+<!-- EXISTING HOUSE -->
+<div class="sec" id="sec-ex"><span class="sec-title">Existing house — lot 10</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-ex')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-ex-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">ARV</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="ex-arv" value="380000" step="1000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Seller concession</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="ex-conc" value="0" step="500" oninput="go()"></div></div>
+  <div class="ir" style="border-bottom:none;"><div class="ir-label"><div class="ir-label-text">Sold in-house</div></div><div class="ir-right">
+    <div class="tog"><button class="tog-btn" id="ex-no" onclick="setExIH(false)">Agent</button><button class="tog-btn sel-on" id="ex-yes" onclick="setExIH(true)">In-house</button></div>
+  </div></div>
+</div>
+<div class="sec" style="padding-top:.625rem;padding-bottom:.35rem;" id="sec-reno"><span class="sec-title">Main house renovation — lot 10</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-reno')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-reno-badge">Confirm</span></span></div>
+<div class="card"><div id="reno-list"></div><div class="strow"><span style="color:var(--muted)">Renovation total</span><span class="c-red" style="font-family:var(--mono)" id="reno-tot">—</span></div></div>
+<button class="li-add no-print" onclick="addLI('reno')">+ add line item</button>
+
+<!-- SETUP COSTS -->
+<div class="sec" id="sec-setup"><span class="sec-title">Manufactured home setup — per unit</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-setup')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-setup-badge">Confirm</span></span></div>
+<div class="card"><div id="setup-list"></div><div class="inforow" id="setup-flat-row" style="display:none;"><span class="inforow-label">Shared setup (flat + per-month)</span><span class="inforow-val" id="setup-flat-val">—</span></div><div class="strow"><span style="color:var(--muted)">Setup total / unit</span><span class="c-green" style="font-family:var(--mono)" id="setup-tot">—</span></div></div>
+<button class="li-add no-print" onclick="addLI('setup')">+ add line item</button>
+
+<!-- DEVELOPMENT -->
+<div class="sec" id="sec-dev"><span class="sec-title">Development costs</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-dev')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-dev-badge">Confirm</span></span></div>
+<div class="card"><div id="dev-list"></div><div class="strow"><span style="color:var(--muted)">Development total</span><span style="font-family:var(--mono)" id="dev-tot">—</span></div></div>
+<button class="li-add no-print" onclick="addLI('dev')">+ add line item</button>
+
+<!-- PROJECT COSTS -->
+<div class="sec" id="sec-proj"><span class="sec-title">Project costs</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-proj')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-proj-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Land</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="p-land" value="1000000" step="5000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Cash in — down payment</div><div class="ir-label-sub">Reference only — not added to cost stack</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="p-down" value="50000" step="1000" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Loan costs / fees</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="p-fin" value="15000" step="500" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Listing commission</div><div class="ir-label-sub">Your side — on all sales</div></div><div class="ir-right" style="gap:8px;"><span class="tog-result" id="lc-res">—</span><div class="tog no-print"><button class="tog-btn sel-0" id="lc0" onclick="setLC(0)">0%</button><button class="tog-btn" id="lc3" onclick="setLC(3)">3%</button><button class="tog-btn" id="lc6" onclick="setLC(6)">6%</button></div></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Buyer's agent commission</div><div class="ir-label-sub">Only on agent-represented sales</div></div><div class="ir-right" style="gap:8px;"><span class="tog-result" id="bc-res">—</span><div class="tog no-print"><button class="tog-btn" id="bc0" onclick="setBC(0)">0%</button><button class="tog-btn sel-3" id="bc3" onclick="setBC(3)">3%</button><button class="tog-btn" id="bc6" onclick="setBC(6)">6%</button></div></div></div>
+  <div class="ir" style="border-bottom:none;"><div class="ir-label"><div class="ir-label-text">Other closing costs</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="p-close" value="18500" step="500" oninput="go()"></div></div>
+  <div class="strow"><span style="color:var(--muted)">Project costs total</span><span style="font-family:var(--mono)" id="proj-tot">—</span></div>
+</div>
+
+<!-- HOLDING COSTS -->
+<div class="sec" id="sec-hold"><span class="sec-title">Holding costs</span><div class="sec-line"></div><span class="sec-lock no-print" onclick="toggleLock('sec-hold')" title="Lock/unlock section"><span class="lock-icon">🔓</span><span class="lock-badge unlocked" id="sec-hold-badge">Confirm</span></span></div>
+<div class="card">
+  <div class="slider-wrap">
+    <div class="slider-top"><span class="slider-title">Project duration</span><span class="slider-num" id="dur-num">12 mo</span></div>
+    <input type="range" id="h-months" min="6" max="24" value="12" step="1" oninput="syncDur(this.value);go()">
+    <div class="slider-sub" id="dur-sub">Each extra month beyond 12 costs <strong id="mo-cost">$15,500</strong></div>
+  </div>
+  <div class="dur-grid">
+    <div class="dur-cell"><div class="dur-mo">10 mo</div><div class="dur-val c-green" id="di-10">—</div></div>
+    <div class="dur-cell"><div class="dur-mo">12 mo</div><div class="dur-val c-blue" id="di-12">—</div></div>
+    <div class="dur-cell"><div class="dur-mo">14 mo</div><div class="dur-val c-amber" id="di-14">—</div></div>
+    <div class="dur-cell"><div class="dur-mo">16 mo</div><div class="dur-val c-red" id="di-16">—</div></div>
+  </div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Absorption rate</div><div class="ir-label-sub">Homes closed per month</div></div><div class="ir-right"><input type="number" class="w-sm" id="h-absorb" value="1" min="0.5" max="5" step="0.5" oninput="go()"><span class="sym" style="font-size:12px">/ mo</span></div></div>
+  <div class="inforow"><span class="inforow-label">Implied duration</span><span class="inforow-val" id="impl-dur">—</span></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Monthly carry cost</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="h-carry" value="14500" step="100" oninput="go()"></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Property tax rate (annual %)</div></div><div class="ir-right"><input type="number" class="w-sm" id="h-tax-pct" value="1.8" step="0.1" min="0" oninput="go()"><span class="sym">%</span></div></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Assessed value</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="h-tax-val" value="1000000" step="5000" oninput="go()"></div></div>
+  <div class="inforow"><span class="inforow-label">Monthly property tax</span><span class="inforow-val c-amber" id="mo-tax">—</span></div>
+  <div class="ir"><div class="ir-label"><div class="ir-label-text">Insurance (annual)</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="h-ins" value="6000" step="500" oninput="go()"></div></div>
+  <div class="ir" style="border-bottom:none;"><div class="ir-label"><div class="ir-label-text">Maintenance (monthly)</div></div><div class="ir-right"><span class="sym">$</span><input type="number" id="h-maint" value="500" step="100" oninput="go()"></div></div>
+  <div class="strow"><span style="color:var(--muted)">Total holding costs</span><span class="c-red" style="font-family:var(--mono)" id="hold-tot">—</span></div>
+</div>
+
+<!-- FULL COST STACK -->
+<div class="sec"><span class="sec-title">Full cost stack</span><div class="sec-line"></div></div>
+<div class="card">
+  <div class="or"><span class="ol">Homes + setup + reno</span><span class="ov" id="o-homes">—</span></div>
+  <div class="or"><span class="ol">Land</span><span class="ov" id="o-land">—</span></div>
+  <div class="or"><span class="ol">Loan costs / fees</span><span class="ov" id="o-fin">—</span></div>
+  <div class="or"><span class="ol">Development</span><span class="ov" id="o-dev">—</span></div>
+  <div class="or"><span class="ol" id="lc-lbl">Listing commission (0%)</span><span class="ov c-red" id="o-lc">—</span></div>
+  <div class="or"><span class="ol" id="bc-lbl">Buyer commission (3%)</span><span class="ov c-red" id="o-bc">—</span></div>
+  <div class="or"><span class="ol">Seller concessions total</span><span class="ov c-red" id="o-conc">—</span></div>
+  <div class="or"><span class="ol">Other closing costs</span><span class="ov" id="o-close">—</span></div>
+  <div class="or"><span class="ol" id="o-carry-lbl">Carry (12 mo)</span><span class="ov c-red" id="o-carry">—</span></div>
+  <div class="or"><span class="ol" id="o-tax-lbl">Property tax (12 mo)</span><span class="ov c-red" id="o-tax">—</span></div>
+  <div class="or"><span class="ol" id="o-ins-lbl">Insurance (12 mo)</span><span class="ov c-red" id="o-ins">—</span></div>
+  <div class="or"><span class="ol" id="o-maint-lbl">Maintenance (12 mo)</span><span class="ov c-red" id="o-maint">—</span></div>
+  <div class="tot-row"><span>Total cost</span><span class="ov" id="o-totalcost">—</span></div>
+  <div class="divl"></div>
+  <div class="profit-row"><span class="profit-lbl">Net profit</span><span class="profit-num" id="o-profit">—</span></div>
+  <div class="stat-strip">
+    <div class="stat"><div class="stat-lbl">$/sqft</div><div class="stat-val" id="o-ppsf">—</div></div>
+    <div class="stat"><div class="stat-lbl">Per home</div><div class="stat-val" id="o-pph">—</div></div>
+    <div class="stat"><div class="stat-lbl">ROC</div><div class="stat-val" id="o-roc">—</div></div>
+    <div class="stat"><div class="stat-lbl">Cash-on-cash</div><div class="stat-val c-green" id="o-coc">—</div></div>
+  </div>
+</div>
+
+<!-- PER LOT BREAKDOWN -->
+<div class="sec"><span class="sec-title">Per-lot breakdown</span><div class="sec-line"></div></div>
+<div class="lot-wrap">
+  <div class="lot-card">
+    <table>
+      <thead><tr><th>Lot</th><th>Model</th><th>Sale price</th><th style="text-align:center;">In-house</th><th>Concession</th><th>Net revenue</th><th>Cost basis</th><th>Lot margin</th></tr></thead>
+      <tbody id="lot-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SENSITIVITY -->
+<div class="sec"><span class="sec-title">Sensitivity — ARV shift × listing commission</span><div class="sec-line"></div></div>
+<div class="sens-wrap">
+  <div class="sens-card">
+    <table>
+      <thead><tr><th>Scenario</th><th>0% listing</th><th>3% listing</th><th>6% listing</th></tr></thead>
+      <tbody id="sens-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BREAK-EVEN -->
+<div class="sec"><span class="sec-title">Break-even analysis</span><div class="sec-line"></div></div>
+<div class="card">
+  <div class="be-grid">
+    <div class="be-cell"><div class="be-label">Break-even ARV</div><div class="be-val" id="be-arv">—</div><div class="be-sub">avg per home</div></div>
+    <div class="be-cell"><div class="be-label">Break-even $/sqft</div><div class="be-val" id="be-ppsf">—</div><div class="be-sub">blended</div></div>
+    <div class="be-cell"><div class="be-label">Dollar cushion</div><div class="be-val" id="be-dollar">—</div><div class="be-sub">above break-even</div></div>
+    <div class="be-cell"><div class="be-label">ARV can drop</div><div class="be-val" id="be-pct">—</div><div class="be-sub">before break-even</div></div>
+  </div>
+</div>
+
+<button class="save-btn no-print" onclick="window.print()">Save as PDF / Print</button>
+<p class="save-hint no-print">Choose "Save as PDF" in the print dialog · All inputs save with the file</p>
+
+</div>
+</div>
+<div class="lender-page" id="lender-page">
+  <div class="lender-hdr">
+    <div class="lender-title">Range Land Group — Confidential Deal Memo</div>
+    <div class="lender-deal" id="l-deal-name">Alvarado — 10-Lot Subdivision</div>
+    <div class="lender-sub" id="l-address">10201 County Road 107, Alvarado, TX 76009</div>
+    <div class="lender-date" id="l-date">—</div>
+  </div>
+  <div class="lender-divider"></div>
+
+  <div class="lender-hero">
+    <div class="lender-big">
+      <div class="lender-big-label">Projected net profit</div>
+      <div class="lender-big-val" id="l-profit">—</div>
+      <div class="lender-big-sub" id="l-margin-sub">—</div>
+    </div>
+    <div class="lender-kpi-grid">
+      <div class="lender-kpi"><div class="lender-kpi-label">Cash-on-cash</div><div class="lender-kpi-val" id="l-coc">—</div></div>
+      <div class="lender-kpi"><div class="lender-kpi-label">Return on cost</div><div class="lender-kpi-val" id="l-roc">—</div></div>
+      <div class="lender-kpi"><div class="lender-kpi-label">Revenue</div><div class="lender-kpi-val" id="l-rev">—</div></div>
+      <div class="lender-kpi"><div class="lender-kpi-label">Total cost</div><div class="lender-kpi-val" id="l-cost">—</div></div>
+    </div>
+  </div>
+
+  <div style="margin:0 1.25rem .75rem;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+    <table class="lender-table">
+      <thead><tr><th style="text-align:left;">Cost item</th><th>Amount</th><th>% of total</th></tr></thead>
+      <tbody id="l-cost-body"></tbody>
+    </table>
+  </div>
+
+  <div class="lender-2col">
+    <div class="lender-metric"><div class="lender-metric-label">Blended $/sqft</div><div class="lender-metric-val" id="l-ppsf">—</div></div>
+    <div class="lender-metric"><div class="lender-metric-label">Profit per lot</div><div class="lender-metric-val" id="l-ppl">—</div></div>
+    <div class="lender-metric"><div class="lender-metric-label">Break-even ARV</div><div class="lender-metric-val" id="l-be">—</div></div>
+    <div class="lender-metric"><div class="lender-metric-label">ARV cushion</div><div class="lender-metric-val" id="l-cushion">—</div></div>
+  </div>
+
+  <div style="margin:0 1.25rem .75rem;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;overflow-x:auto;">
+    <table class="lender-table">
+      <thead><tr><th style="text-align:left;">Lot</th><th>Model</th><th>Sale price</th><th>Net revenue</th><th>Cost basis</th><th>Margin</th></tr></thead>
+      <tbody id="l-lot-body"></tbody>
+    </table>
+  </div>
+
+  <div style="margin:0 1.25rem .75rem;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;overflow-x:auto;">
+    <div style="padding:.875rem 1rem .3rem;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Sensitivity — profit by ARV scenario</div>
+    <table class="lender-table">
+      <thead><tr><th style="text-align:left;">ARV scenario</th><th>0% listing</th><th>3% listing</th><th>6% listing</th></tr></thead>
+      <tbody id="l-sens-body"></tbody>
+    </table>
+  </div>
+
+  <div class="lender-footer">
+    <p><strong>Confidential — For Lender Review Only.</strong> All figures represent pre-financing projections unless otherwise noted. Debt service, loan fees, and carry costs are included in the cost stack above. All figures subject to final due diligence, appraisal, and market conditions. Prepared by Range Land Group.</p>
+  </div>
+  <div style="height:2rem;"></div>
+</div>
+
+<script>
+var lcPct=0, bcPct=3, exIH=true;
+var SD=[['House pad',3000],['Driveway base',1200],['Culvert',700],['Labor',1500],['Final grade',1200],['Septic (aerobic)',8500],['Plumbing to septic',400],['Water line',700],['Electric (underground)',2200],['Electrical post',2000],['Set & level',7250],['Interior trim out',1600],['FHA retrofit',3000],['Skirting',3000],['Decks',3000],['HVAC',4000],['Trash cleanup',1500],['Carport',2000],['Contingency',3000]];
+var DD=[['Electricity',30000],['Water meters',150000],['Surveying / platting',11000],['Attorney fees',7500]];
+var D={setup:[],dev:[],reno:[]};
+SD.forEach(function(r){D.setup.push({l:r[0],v:r[1]});});
+DD.forEach(function(r){D.dev.push({l:r[0],v:r[1]});});
+var RD=[
+  ['Foundation — main house',12000],['Foundation — cabin',2000],
+  ['Subfloor replacement',6000],['Interior paint',8000],['Flooring (LVP)',8000],
+  ['Drywall repair',2500],['Decks',3000],['Driveway (gravel)',2000],
+  ['Electrical',4500],['Plumbing',3000],['Appliances',2500],
+  ['Showers (3 total)',9000],['Kitchen counters + backsplash',4000],
+  ['Light framing',1200],['Trim',3000],['Hardware & fixtures',2500],
+  ['Construction clean',1500],['Contingency',10000]
+];
+/* NOTE: PDF line items sum to $74,700 hard costs, but PDF summary states $84,700.
+   $10,000 gap unaccounted — verify with contractor for missing scope item. */
+RD.forEach(function(r){D.reno.push({l:r[0],v:r[1]});});
+
+var LS='flex:1;min-width:0;padding:7px 10px;font-size:13px;font-family:inherit;border:1.5px solid #E2E2EA;border-radius:8px;background:#F7F7FA;color:#0C0C0E;height:38px;';
+var NS='width:96px;text-align:right;padding:7px 10px;font-size:13px;font-weight:500;font-family:"DM Mono",monospace;border:1.5px solid #E2E2EA;border-radius:8px;background:#F7F7FA;color:#0C0C0E;height:38px;flex-shrink:0;-moz-appearance:textfield;';
+var BTN_BASE='width:28px;height:28px;border:1.5px solid #E2E2EA;border-radius:7px;background:transparent;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1;font-family:"DM Mono",monospace;';
+var LOCK_BTN_S=BTN_BASE+'color:#87878F;font-size:12px;';
+var LOCK_BTN_LOCKED_S=BTN_BASE+'background:#EBF7F3;color:#12916A;border-color:#A8E2D0;font-size:12px;';
+var TYPE_STYLES={
+  flat:BTN_BASE+'color:#6B6B73;',
+  per_unit:BTN_BASE+'background:#EEF3FC;color:#1A56DB;border-color:#BDD1F2;',
+  per_month:BTN_BASE+'background:#FFF4E5;color:#B06A14;border-color:#F5D9A8;'
+};
+var TYPE_LABELS={flat:'1×',per_unit:'×n',per_month:'/mo'};
+var TYPE_TITLES={flat:'Flat — one-time cost',per_unit:'Per unit — multiplied by home count',per_month:'Per month — multiplied by hold months'};
+var TYPE_ORDER=['flat','per_unit','per_month'];
+var HIDE_VIS_S=BTN_BASE+'color:#12916A;font-size:13px;';
+var HIDE_HIDDEN_S=BTN_BASE+'background:#FDECEC;color:#D93F3F;border-color:#F2BCBC;font-size:13px;';
+
+function defaultType(k){return k==='setup'?'per_unit':'flat';}
+
+function renderLI(k){
+  var el=document.getElementById(k+'-list');el.innerHTML='';
+  D[k].forEach(function(item,i){
+    var isLocked=!!item.locked;
+    var isHidden=!!item.hideFromLender;
+    var type=item.type||defaultType(k);
+    var row=document.createElement('div');row.className='li'+(isLocked?' li-locked':'')+(isHidden?' li-hidden':'');
+
+    var t=document.createElement('input');t.type='text';t.value=item.l;t.placeholder=item.l||'Line item';
+    t.setAttribute('style',LS+(isLocked?'opacity:.6;pointer-events:none;':''));t.disabled=isLocked;
+    t.oninput=function(){D[k][i].l=this.value;};
+
+    var px=document.createElement('span');px.className='sym';px.textContent='$';
+
+    var n=document.createElement('input');n.type='number';n.value=item.v;n.step=100;
+    n.setAttribute('style',NS+(isLocked?'opacity:.6;pointer-events:none;':''));n.disabled=isLocked;
+    n.oninput=function(){D[k][i].v=parseFloat(this.value)||0;go();};
+
+    var tp=document.createElement('button');tp.className='li-type no-print';
+    tp.setAttribute('style',TYPE_STYLES[type]);
+    tp.title=TYPE_TITLES[type]+' · click to change';tp.innerHTML=TYPE_LABELS[type];
+    tp.disabled=isLocked;
+    tp.onclick=(function(key,idx){return function(e){
+      e.preventDefault();
+      if(D[key][idx].locked)return;
+      var cur=D[key][idx].type||defaultType(key);
+      var next=TYPE_ORDER[(TYPE_ORDER.indexOf(cur)+1)%TYPE_ORDER.length];
+      D[key][idx].type=next;renderLI(key);go();
+    };})(k,i);
+
+    var hd=document.createElement('button');hd.className='li-hide no-print';
+    hd.setAttribute('style',isHidden?HIDE_HIDDEN_S:HIDE_VIS_S);
+    hd.title=isHidden?'Hidden from lender view — click to show':'Visible to lender — click to hide';
+    hd.innerHTML=isHidden?'🙈':'👁';
+    hd.disabled=isLocked;
+    hd.onclick=(function(key,idx){return function(e){
+      e.preventDefault();
+      if(D[key][idx].locked)return;
+      D[key][idx].hideFromLender=!D[key][idx].hideFromLender;renderLI(key);go();
+    };})(k,i);
+
+    var lk=document.createElement('button');lk.className='li-lock no-print';
+    lk.setAttribute('style',isLocked?LOCK_BTN_LOCKED_S:LOCK_BTN_S);
+    lk.title=isLocked?'Unlock this line':'Lock this line';lk.innerHTML=isLocked?'🔒':'🔓';
+    lk.onclick=(function(key,idx){return function(e){e.preventDefault();D[key][idx].locked=!D[key][idx].locked;renderLI(key);go();};})(k,i);
+
+    var b=document.createElement('button');b.className='li-del no-print';b.innerHTML='&#10005;';
+    b.style.display=isLocked?'none':'';b.disabled=isLocked;
+    b.onclick=(function(key,idx){return function(){if(D[key][idx].locked)return;D[key].splice(idx,1);renderLI(key);go();};})(k,i);
+
+    row.appendChild(t);row.appendChild(px);row.appendChild(n);
+    row.appendChild(tp);row.appendChild(hd);row.appendChild(lk);row.appendChild(b);
+    el.appendChild(row);
+  });
+}
+function addLI(k){D[k].push({l:'',v:0,type:defaultType(k),locked:false,hideFromLender:false});renderLI(k);go();}
+function sumD(k){return D[k].reduce(function(s,x){return s+(+x.v||0);},0);}
+
+function itemCost(section,item,ctx){
+  var t=item.type||defaultType(section);
+  var v=+item.v||0;
+  if(t==='flat')return v;
+  if(t==='per_month')return v*(ctx.months||0);
+  if(t==='per_unit'){
+    if(section==='setup')return v*(ctx.mfgHomes||0);
+    if(section==='dev')return v*(ctx.totalHomes||0);
+    return v;
+  }
+  return v;
+}
+function sectionCost(section,ctx,forLender){
+  return D[section].reduce(function(s,item){
+    if(forLender&&item.hideFromLender)return s;
+    return s+itemCost(section,item,ctx);
+  },0);
+}
+function setupPerUnitSum(forLender){
+  return D.setup.reduce(function(s,item){
+    if(forLender&&item.hideFromLender)return s;
+    var t=item.type||'per_unit';
+    return s+(t==='per_unit'?(+item.v||0):0);
+  },0);
+}
+function setupSharedCost(ctx,forLender){
+  return D.setup.reduce(function(s,item){
+    if(forLender&&item.hideFromLender)return s;
+    var t=item.type||'per_unit';
+    var v=+item.v||0;
+    if(t==='flat')return s+v;
+    if(t==='per_month')return s+v*(ctx.months||0);
+    return s;
+  },0);
+}
+function gv(id){var e=document.getElementById(id);if(!e)return 0;var v=parseFloat(String(e.value).replace(/,/g,''));return isNaN(v)?0:v;}
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function fmtK(n){return '$'+Math.round(n/1000)+'K';}
+function pp(n){return(n*100).toFixed(1)+'%';}
+function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function col(v){return v>=0?'var(--green)':v<0?'var(--red)':'var(--text)';}
+
+function setLC(p){lcPct=p;[0,3,6].forEach(function(v){var b=document.getElementById('lc'+v);if(b)b.className='tog-btn'+(p===v?' sel-'+p:'');});go();}
+function setBC(p){bcPct=p;[0,3,6].forEach(function(v){var b=document.getElementById('bc'+v);if(b)b.className='tog-btn'+(p===v?' sel-'+p:'');});go();}
+function setExIH(v){exIH=v;document.getElementById('ex-yes').className='tog-btn'+(v?' sel-on':'');document.getElementById('ex-no').className='tog-btn'+(!v?' sel-on':'');go();}
+function syncDur(v){set('dur-num',v+' mo');}
+
+function calcP(avARV,lc,bc,mo,base){
+  var b=base;
+  var avG=b.avQ*avARV,chG=b.chQ*b.chA,solG=(b.solQ||0)*(b.solA||0),exG=b.exA;
+  var avD=b.avQ*b.avConc,chD=b.chQ*b.chConc,solD=(b.solQ||0)*(b.solConc||0),exD=b.exConc;
+  var nr=avG+chG+solG+exG-avD-chD-solD-exD;
+  var grossRev=avG+chG+solG+exG;
+  var agentRev=(b.avQ-b.avIH)*avARV+(b.chQ-b.chIH)*b.chA+((b.solQ||0)-(b.solIH||0))*(b.solA||0)+(b.exIH?0:b.exA);
+  var lcCost=nr*(lc/100);
+  var bcCost=grossRev>0?nr*(agentRev/grossRev)*(bc/100):0;
+  var homeCost=b.avQ*b.avC+b.avQ*b.setup+b.chQ*b.chC+b.chQ*b.setup+(b.solQ||0)*(b.solC||0)+(b.solQ||0)*b.setup+b.exR+(b.setupShared||0);
+  var tax=b.taxVal*b.taxPct*(mo/12),ins=b.ins*(mo/12),maint=b.maint*mo,carry=b.carry*mo;
+  var hold=carry+tax+ins+maint;
+  var total=homeCost+b.land+b.dev+b.fin+lcCost+bcCost+b.cls+hold;
+  return nr-total;
+}
+
+function go(){
+  var avQ=gv('av-qty'),chQ=gv('ch-qty');
+  var avA=gv('av-arv'),chA=gv('ch-arv'),exA=gv('ex-arv');
+  var avC=gv('av-cost'),chC=gv('ch-cost');
+  var avConc=gv('av-conc'),chConc=gv('ch-conc'),exConc=gv('ex-conc');
+  var solQ=gv('sol-qty'),solA=gv('sol-arv'),solC=gv('sol-cost'),solConc=gv('sol-conc'),solIH=Math.min(gv('sol-ih'),gv('sol-qty'));
+  var avIH=Math.min(gv('av-ih'),avQ),chIH=Math.min(gv('ch-ih'),chQ);
+  var land=gv('p-land'),down=gv('p-down'),fin=gv('p-fin'),cls=gv('p-close');
+  var mo=gv('h-months'),carry=gv('h-carry'),taxPct=gv('h-tax-pct')/100;
+  var taxVal=gv('h-tax-val'),ins=gv('h-ins'),maint=gv('h-maint');
+  var absorb=gv('h-absorb')||1;
+  var cashIn=down+fin;
+  var mfgHomes=avQ+chQ+solQ;
+  var totalHomes=mfgHomes+1;
+
+  var ctx={mfgHomes:mfgHomes,totalHomes:totalHomes,months:mo};
+  var setup=setupPerUnitSum(false);
+  var setupShared=setupSharedCost(ctx,false);
+  var dev=sectionCost('dev',ctx,false);
+  var exR=sectionCost('reno',ctx,false);
+
+  var avG=avQ*avA,chG=chQ*chA,solG=solQ*solA;
+  var avD=avQ*avConc,chD=chQ*chConc,solD=solQ*solConc;
+  var totConc=avD+chD+solD+exConc;
+  var netRev=avG+chG+solG+exA-totConc;
+
+  var agentRev=(avQ-avIH)*avA+(chQ-chIH)*chA+(solQ-solIH)*solA+(exIH?0:exA);
+  var grossRev=avG+chG+solG+exA;
+  var lcCost=netRev*(lcPct/100);
+  var bcCost=grossRev>0?netRev*(agentRev/grossRev)*(bcPct/100):0;
+  var totalComm=lcCost+bcCost;
+  var inHouse=avIH+chIH+(exIH?1:0);
+
+  var avHC=avQ*avC,avSC=avQ*setup,chHC=chQ*chC,chSC=chQ*setup,solHC=solQ*solC,solSC=solQ*setup;
+  var homeCost=avHC+avSC+chHC+chSC+solHC+solSC+exR+setupShared;
+
+  var carryT=carry*mo,taxT=taxVal*taxPct*(mo/12),insT=ins*(mo/12),maintT=maint*mo;
+  var holdT=carryT+taxT+insT+maintT;
+  var moTax=Math.round(taxVal*taxPct/12);
+  var moCostTotal=carry+(taxVal*taxPct/12)+maint;
+
+  var projTot=land+fin+lcCost+bcCost+cls;
+
+  var totalCost=homeCost+land+dev+fin+totalComm+totConc+cls+holdT;
+  var profit=netRev-totalCost;
+  var margin=netRev>0?profit/netRev:0;
+  var sqft=avQ*2001+chQ*1896+solQ*2100;
+  var ppsf=sqft>0?Math.round(grossRev/sqft):0;
+  var pph=Math.round(profit/Math.max(1,totalHomes));
+  var roc=totalCost>0?profit/totalCost:0;
+  var coc=cashIn>0?profit/cashIn:0;
+  var implDur=Math.ceil(totalHomes/Math.max(0.1,absorb));
+
+  var heroCol=profit>=800000?'#12916A':profit>=400000?'#B06A14':'#D93F3F';
+  var hp=document.getElementById('h-profit');if(hp){hp.textContent=fmt(profit);hp.style.color=profit>=0?'#fff':'#FF8080';}
+  set('h-rev',fmtK(netRev));set('h-cost',fmtK(totalCost));set('h-margin',pp(margin));set('h-ppl',fmtK(pph));
+  var hb=document.getElementById('h-bar');if(hb){hb.style.width=Math.min(100,Math.max(0,Math.round(margin*350)))+'%';}
+
+  var kc=document.getElementById('k-coc');if(kc){kc.textContent=pp(coc);kc.style.color=coc>4?'var(--green)':coc>1?'var(--amber)':'var(--red)';}
+  set('k-coc-sub',fmt(cashIn)+' cash in');
+  var avgARV=totalHomes>0?(avQ*avA+chQ*chA+exA)/totalHomes:0;
+  var beCost=totalCost/Math.max(1,totalHomes);
+  set('k-be',fmt(Math.round(beCost)));
+  set('k-be-sub','vs '+fmt(Math.round(avgARV))+' avg ARV');
+  var cushion=avgARV-beCost;
+  var cushPct=avgARV>0?cushion/avgARV:0;
+  var kcu=document.getElementById('k-cushion');if(kcu){kcu.textContent=pp(Math.max(0,cushPct));kcu.style.color=cushPct>0.15?'var(--green)':cushPct>0.05?'var(--amber)':'var(--red)';}
+
+  set('av-setup-sub',fmt(setup)+' / unit');
+  set('ch-setup-sub',fmt(setup)+' / unit');
+  set('sol-setup-sub',fmt(setup)+' / unit');
+  set('av-rev-sub',fmt(avG-avD));set('ch-rev-sub',fmt(chG-chD));set('sol-rev-sub',fmt(solG-solD));
+
+  set('setup-tot',fmt(setup));set('dev-tot',fmt(dev));set('reno-tot',fmt(exR));
+  var sfr=document.getElementById('setup-flat-row');
+  if(sfr){sfr.style.display=setupShared>0?'':'none';set('setup-flat-val',fmt(setupShared));}
+  set('proj-tot',fmt(land+fin+lcCost+bcCost+cls));
+  set('hold-tot',fmt(holdT));
+  set('mo-tax',fmt(moTax)+'/mo');
+  var mc=document.getElementById('mo-cost');if(mc)mc.textContent=fmt(Math.round(moCostTotal));
+
+  var lr=document.getElementById('lc-res');if(lr){lr.textContent=lcPct===0?'—':'−'+fmt(lcCost);lr.style.color=lcPct===0?'var(--muted)':'var(--red)';}
+  var br=document.getElementById('bc-res');if(br){br.textContent=bcPct===0?'—':'−'+fmt(bcCost);br.style.color=bcPct===0?'var(--muted)':'var(--red)';}
+  var ll=document.getElementById('lc-lbl');if(ll)ll.textContent='Listing commission ('+lcPct+'%)';
+  var bl=document.getElementById('bc-lbl');if(bl)bl.textContent='Buyer commission ('+bcPct+'%, '+(avQ-avIH+chQ-chIH+(exIH?0:1))+' of '+totalHomes+' agent sales)';
+
+  syncDur(Math.round(mo));
+  set('impl-dur',implDur+' months at '+absorb+' homes/mo');
+  var base={avQ:avQ,avA:avA,avC:avC,avIH:avIH,avConc:avConc,chQ:chQ,chA:chA,chC:chC,chIH:chIH,chConc:chConc,solQ:solQ,solA:solA,solC:solC,solIH:solIH,solConc:solConc,exA:exA,exR:exR,exConc:exConc,exIH:exIH,setup:setup,setupShared:setupShared,dev:dev,land:land,fin:fin,cls:cls,carry:carry,taxPct:taxPct,taxVal:taxVal,ins:ins,maint:maint};
+  var p10=calcP(avA,lcPct,bcPct,10,base),p12=calcP(avA,lcPct,bcPct,12,base);
+  var p14=calcP(avA,lcPct,bcPct,14,base),p16=calcP(avA,lcPct,bcPct,16,base);
+  set('di-10',fmtK(p10));set('di-12',fmtK(p12));set('di-14',fmtK(p14));set('di-16',fmtK(p16));
+
+  set('o-homes',fmt(homeCost));set('o-land',fmt(land));set('o-fin',fmt(fin));set('o-dev',fmt(dev));
+  set('o-lc',lcPct===0?'—':'−'+fmt(lcCost));set('o-bc',bcPct===0?'—':'−'+fmt(bcCost));
+  set('o-conc',totConc>0?'−'+fmt(totConc):'—');set('o-close',fmt(cls));
+  var labels=[['o-carry-lbl','Carry (MO mo)'],['o-tax-lbl','Property tax (MO mo)'],['o-ins-lbl','Insurance (MO mo)'],['o-maint-lbl','Maintenance (MO mo)']];
+  labels.forEach(function(pair){var e=document.getElementById(pair[0]);if(e)e.textContent=pair[1].replace('MO',Math.round(mo));});
+  set('o-carry',fmt(carryT));set('o-tax',fmt(taxT));set('o-ins',fmt(insT));set('o-maint',fmt(maintT));
+  set('o-totalcost',fmt(totalCost));
+  var op=document.getElementById('o-profit');if(op){op.textContent=fmt(profit);op.style.color=profit>=0?heroCol:'var(--red)';}
+  set('o-ppsf','$'+ppsf+'/sqft');set('o-pph',fmt(pph));set('o-roc',pp(roc));
+  var oc=document.getElementById('o-coc');if(oc){oc.textContent=pp(coc);oc.style.color=coc>4?'var(--green)':coc>1?'var(--amber)':'var(--red)';}
+
+  var tbody=document.getElementById('lot-body');
+  if(tbody){
+    tbody.innerHTML='';
+    var perLotFixed=(land+dev+fin+totalComm+cls+holdT)/Math.max(1,totalHomes);
+    var rows=[];
+    for(var i=0;i<avQ;i++){
+      var ih=i<avIH;
+      var nr=avA-avConc;
+      var basis=avC+setup+perLotFixed;
+      var lotM=(nr-basis)/Math.max(1,nr);
+      rows.push({n:'Lot '+(rows.length+1),model:'AV',sale:avA,conc:avConc,nr:nr,basis:basis,m:lotM,ih:ih,isEx:false});
+    }
+    for(var i=0;i<chQ;i++){
+      var ih=i<chIH;
+      var nr=chA-chConc;
+      var basis=chC+setup+perLotFixed;
+      var lotM=(nr-basis)/Math.max(1,nr);
+      rows.push({n:'Lot '+(rows.length+1),model:'Choice',sale:chA,conc:chConc,nr:nr,basis:basis,m:lotM,ih:ih,isEx:false});
+    }
+    for(var i=0;i<solQ;i++){
+      var ih=i<solIH;
+      var nr=solA-solConc;
+      var basis=solC+setup+perLotFixed;
+      var lotM=(nr-basis)/Math.max(1,nr);
+      rows.push({n:'Lot '+(rows.length+1),model:'Solace',sale:solA,conc:solConc,nr:nr,basis:basis,m:lotM,ih:ih,isEx:false});
+    }
+    var exNR=exA-exConc;
+    var exBasis=exR+perLotFixed;
+    var exM=(exNR-exBasis)/Math.max(1,exNR);
+    rows.push({n:'Lot '+(rows.length+1),model:'Existing',sale:exA,conc:exConc,nr:exNR,basis:exBasis,m:exM,ih:exIH,isEx:true});
+
+    rows.forEach(function(r){
+      var tr=document.createElement('tr');
+      if(r.isEx)tr.className='tr-ex';
+      var mc=r.m>=0.2?'g':r.m>=0.1?'a':'r';
+      tr.innerHTML='<td>'+r.n+'</td>'
+        +'<td style="font-family:var(--sans);text-align:center;font-size:12px;">'+r.model+'</td>'
+        +'<td>'+fmt(r.sale)+'</td>'
+        +'<td style="text-align:center;font-family:var(--sans);font-size:12px;">'+(r.ih?'✓ Yes':'—')+'</td>'
+        +'<td class="c-red">'+(r.conc>0?'−'+fmt(r.conc):'—')+'</td>'
+        +'<td>'+fmt(r.nr)+'</td>'
+        +'<td>'+fmt(Math.round(r.basis))+'</td>'
+        +'<td class="'+mc+'">'+pp(r.m)+'</td>';
+      tbody.appendChild(tr);
+    });
+    var totTr=document.createElement('tr');totTr.className='tr-tot';
+    totTr.innerHTML='<td colspan="2">Total</td><td>'+fmt(grossRev)+'</td><td style="text-align:center;font-family:var(--sans);font-size:12px;">'+inHouse+' of '+totalHomes+'</td><td class="c-red">'+(totConc>0?'−'+fmt(totConc):'—')+'</td><td>'+fmt(netRev)+'</td><td>'+fmt(totalCost)+'</td><td class="'+(profit>=0?'g':'r')+'">'+pp(margin)+'</td>';
+    tbody.appendChild(totTr);
+  }
+
+  var sbody=document.getElementById('sens-body');
+  if(sbody){
+    sbody.innerHTML='';
+    [{lbl:'Base ARV',m:1},{lbl:'−5%',m:.95},{lbl:'−10%',m:.90},{lbl:'−15%',m:.85},{lbl:'−20%',m:.80}].forEach(function(s){
+      var tr=document.createElement('tr');
+      var cells='<td>'+s.lbl+'</td>';
+      [0,3,6].forEach(function(lc){
+        var p=calcP(avA*s.m,lc,bcPct,mo,base);
+        var c=p>=700000?'g':p>=300000?'a':'r';
+        cells+='<td class="'+c+'">'+fmtK(p)+'</td>';
+      });
+      tr.innerHTML=cells;sbody.appendChild(tr);
+    });
+  }
+
+  var beARV=totalCost/Math.max(1,totalHomes);
+  var bePPSF=sqft>0?totalCost/sqft:0;
+  var dCushion=avgARV-beARV;
+  var pCushion=avgARV>0?dCushion/avgARV:0;
+  set('be-arv',fmt(Math.round(beARV)));
+  set('be-ppsf','$'+Math.round(bePPSF)+'/sqft');
+  var bd=document.getElementById('be-dollar');if(bd){bd.textContent=fmt(Math.round(Math.max(0,dCushion)));bd.style.color=dCushion>30000?'var(--green)':dCushion>0?'var(--amber)':'var(--red)';}
+  var bp=document.getElementById('be-pct');if(bp){bp.textContent=pp(Math.max(0,pCushion));bp.style.color=pCushion>0.15?'var(--green)':pCushion>0.05?'var(--amber)':'var(--red)';}
+}
+
+renderLI('setup');renderLI('dev');renderLI('reno');go();
+
+var SECTIONS=['sec-deal','sec-av','sec-ch','sec-sol','sec-ex','sec-reno','sec-setup','sec-dev','sec-proj','sec-hold'];
+var locked={};
+SECTIONS.forEach(function(s){locked[s]=false;});
+
+function toggleLock(sid){
+  locked[sid]=!locked[sid];
+  applyLock(sid);
+}
+
+function applyLock(sid){
+  var el=document.getElementById(sid);
+  if(!el)return;
+  var badge=document.getElementById(sid+'-badge');
+  var icon=el.querySelector('.lock-icon');
+  var sib=el.nextElementSibling;
+  while(sib && !sib.classList.contains('sec') && !sib.classList.contains('save-btn') && !sib.classList.contains('lender-page')){
+    if(locked[sid]){
+      sib.classList.add('section-locked');
+      sib.querySelectorAll('input,textarea,button:not(.li-del)').forEach(function(inp){inp.disabled=true;});
+    } else {
+      sib.classList.remove('section-locked');
+      sib.querySelectorAll('input,textarea,button').forEach(function(inp){inp.disabled=false;});
+      ['setup','dev','reno'].forEach(function(k){var listEl=document.getElementById(k+'-list');if(listEl&&sib.contains(listEl))renderLI(k);});
+    }
+    sib=sib.nextElementSibling;
+  }
+  if(badge){
+    badge.textContent=locked[sid]?'✓ Confirmed':'Confirm';
+    badge.className='lock-badge '+(locked[sid]?'locked':'unlocked');
+  }
+  if(icon)icon.textContent=locked[sid]?'🔒':'🔓';
+}
+
+
+var currentView='calc';
+function setView(v){
+  currentView=v;
+  document.getElementById('calc-page').className='calc-page'+(v==='lender'?' hidden':'');
+  document.getElementById('lender-page').className='lender-page'+(v==='lender'?' visible':'');
+  document.getElementById('vb-calc').className='view-btn'+(v==='calc'?' active':'');
+  document.getElementById('vb-lender').className='view-btn'+(v==='lender'?' active':'');
+  if(v==='lender')renderLender();
+}
+
+function renderLender(){
+  var d=new Date();
+  var ds=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  set('l-date','Prepared '+ds+' · Confidential');
+  
+  var avQ=gv('av-qty'),chQ=gv('ch-qty');
+  var avA=gv('av-arv'),chA=gv('ch-arv'),exA=gv('ex-arv');
+  var avC=gv('av-cost'),chC=gv('ch-cost');
+  var avConc=gv('av-conc'),chConc=gv('ch-conc'),exConc=gv('ex-conc');
+  var solQ=gv('sol-qty'),solA=gv('sol-arv'),solC=gv('sol-cost'),solConc=gv('sol-conc'),solIH=Math.min(gv('sol-ih'),gv('sol-qty'));
+  var avIH=Math.min(gv('av-ih'),avQ),chIH=Math.min(gv('ch-ih'),chQ);
+  var land=gv('p-land'),down=gv('p-down'),fin=gv('p-fin'),cls=gv('p-close');
+  var mo=gv('h-months'),carry=gv('h-carry'),taxPct=gv('h-tax-pct')/100;
+  var taxVal=gv('h-tax-val'),ins=gv('h-ins'),maint=gv('h-maint');
+  var cashIn=down+fin;
+  var mfgHomes=avQ+chQ+solQ;
+  var totalHomes=mfgHomes+1;
+
+  var ctx={mfgHomes:mfgHomes,totalHomes:totalHomes,months:mo};
+  var setup=setupPerUnitSum(true);
+  var setupShared=setupSharedCost(ctx,true);
+  var dev=sectionCost('dev',ctx,true);
+  var exR=sectionCost('reno',ctx,true);
+
+  var avG=avQ*avA,chG=chQ*chA,solG=solQ*solA;
+  var avD=avQ*avConc,chD=chQ*chConc,solD=solQ*solConc,totConc=avD+chD+solD+exConc;
+  var netRev=avG+chG+solG+exA-totConc;
+  var agentRev=(avQ-avIH)*avA+(chQ-chIH)*chA+(solQ-solIH)*solA+(exIH?0:exA);
+  var grossRev=avG+chG+solG+exA;
+  var lcCost=netRev*(lcPct/100);
+  var bcCost=grossRev>0?netRev*(agentRev/grossRev)*(bcPct/100):0;
+  var homeCost=avQ*avC+avQ*setup+chQ*chC+chQ*setup+solQ*solC+solQ*setup+exR+setupShared;
+  var carryT=carry*mo,taxT=taxVal*taxPct*(mo/12),insT=ins*(mo/12),maintT=maint*mo;
+  var holdT=carryT+taxT+insT+maintT;
+  var totalCost=homeCost+land+dev+fin+lcCost+bcCost+totConc+cls+holdT;
+  var profit=netRev-totalCost;
+  var margin=netRev>0?profit/netRev:0;
+  var sqft=avQ*2001+chQ*1896+solQ*2100;
+  var ppsf=sqft>0?Math.round(grossRev/sqft):0;
+  var pph=Math.round(profit/Math.max(1,totalHomes));
+  var roc=totalCost>0?profit/totalCost:0;
+  var coc=cashIn>0?profit/cashIn:0;
+  var avgARV=totalHomes>0?(avQ*avA+chQ*chA+exA)/totalHomes:0;
+  var beARV=totalCost/Math.max(1,totalHomes);
+  var cushPct=avgARV>0?(avgARV-beARV)/avgARV:0;
+
+  var dealNameEl=document.querySelector('#calc-page input[placeholder*="subdivision"]');
+  if(dealNameEl&&dealNameEl.value)set('l-deal-name',dealNameEl.value);
+  
+  set('l-profit',fmt(profit));
+  set('l-margin-sub',pp(margin)+' margin · '+totalHomes+' lots · '+Math.round(mo)+' month hold');
+  set('l-coc',pp(coc));set('l-roc',pp(roc));
+  set('l-rev',fmt(netRev));set('l-cost',fmt(totalCost));
+  set('l-ppsf','$'+ppsf+'/sqft');set('l-ppl',fmt(pph));
+  set('l-be',fmt(Math.round(beARV)));
+  var lcu=document.getElementById('l-cushion');
+  if(lcu){lcu.textContent=pp(Math.max(0,cushPct));lcu.style.color=cushPct>0.15?'var(--green)':cushPct>0.05?'var(--amber)':'var(--red)';}
+
+  var cb=document.getElementById('l-cost-body');
+  if(cb){
+    var rows=[
+      ['Homes + setup + renovation',homeCost],
+      ['Land acquisition',land],
+      ['Development',dev],
+      ['Loan costs / fees',fin],
+      ['Listing commission ('+lcPct+'%)',lcCost],
+      ["Buyer's agent commission ("+bcPct+"%)",bcCost],
+      ['Seller concessions',totConc],
+      ['Other closing costs',cls],
+      ['Carrying costs ('+Math.round(mo)+' mo)',carryT],
+      ['Property tax ('+Math.round(mo)+' mo)',taxT],
+      ['Insurance ('+Math.round(mo)+' mo)',insT],
+      ['Maintenance ('+Math.round(mo)+' mo)',maintT],
+    ].filter(function(r){return r[1]>0;});
+    cb.innerHTML='';
+    rows.forEach(function(r){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+r[0]+'</td><td>'+fmt(r[1])+'</td><td style="color:var(--muted)">'+pp(r[1]/totalCost)+'</td>';
+      cb.appendChild(tr);
+    });
+    var tot=document.createElement('tr');tot.className='lender-tot';
+    tot.innerHTML='<td>Total cost</td><td>'+fmt(totalCost)+'</td><td>100%</td>';
+    cb.appendChild(tot);
+    var rev=document.createElement('tr');
+    rev.innerHTML='<td style="color:var(--green);font-weight:600">Net revenue</td><td style="color:var(--green);font-weight:600">'+fmt(netRev)+'</td><td></td>';
+    cb.appendChild(rev);
+    var pr=document.createElement('tr');
+    pr.innerHTML='<td style="font-weight:700">Net profit</td><td style="font-weight:700;color:'+(profit>=0?'var(--green)':'var(--red)')+'">'+fmt(profit)+'</td><td style="color:var(--muted)">'+pp(margin)+'</td>';
+    cb.appendChild(pr);
+  }
+
+  var lb=document.getElementById('l-lot-body');
+  if(lb){
+    lb.innerHTML='';
+    var perLotFixed=(land+dev+fin+lcCost+bcCost+cls+holdT)/Math.max(1,totalHomes);
+    var lrows=[];
+    for(var i=0;i<avQ;i++){var nr=avA-avConc;var basis=avC+setup+perLotFixed;lrows.push({n:'Lot '+(lrows.length+1),model:'AV',sale:avA,nr:nr,basis:basis,m:(nr-basis)/Math.max(1,nr)});}
+    for(var i=0;i<chQ;i++){var nr=chA-chConc;var basis=chC+setup+perLotFixed;lrows.push({n:'Lot '+(lrows.length+1),model:'Choice',sale:chA,nr:nr,basis:basis,m:(nr-basis)/Math.max(1,nr)});}
+    var exNR=exA-exConc;var exBasis=exR+perLotFixed;
+    lrows.push({n:'Lot '+(lrows.length+1),model:'Existing',sale:exA,nr:exNR,basis:exBasis,m:(exNR-exBasis)/Math.max(1,exNR)});
+    lrows.forEach(function(r){
+      var tr=document.createElement('tr');
+      var mc=r.m>=0.2?'var(--green)':r.m>=0.1?'var(--amber)':'var(--red)';
+      tr.innerHTML='<td>'+r.n+'</td><td style="font-family:var(--sans);text-align:left;">'+r.model+'</td><td>'+fmt(r.sale)+'</td><td>'+fmt(r.nr)+'</td><td>'+fmt(Math.round(r.basis))+'</td><td style="color:'+mc+';font-weight:600">'+pp(r.m)+'</td>';
+      lb.appendChild(tr);
+    });
+    var tot=document.createElement('tr');tot.className='lender-tot';
+    tot.innerHTML='<td colspan="2">Total</td><td>'+fmt(grossRev)+'</td><td>'+fmt(netRev)+'</td><td>'+fmt(totalCost)+'</td><td style="color:'+(profit>=0?'var(--green)':'var(--red)')+'">'+pp(margin)+'</td>';
+    lb.appendChild(tot);
+  }
+
+  var sb=document.getElementById('l-sens-body');
+  if(sb){
+    sb.innerHTML='';
+    var base2={avQ:avQ,avA:avA,avC:avC,avIH:avIH,avConc:avConc,chQ:chQ,chA:chA,chC:chC,chIH:chIH,chConc:chConc,solQ:solQ,solA:solA,solC:solC,solIH:solIH,solConc:solConc,exA:exA,exR:exR,exConc:exConc,exIH:exIH,setup:setup,setupShared:setupShared,dev:dev,land:land,fin:fin,cls:cls,carry:carry,taxPct:taxPct,taxVal:taxVal,ins:ins,maint:maint};
+    [{lbl:'Base ARV',m:1},{lbl:'−5%',m:.95},{lbl:'−10%',m:.90},{lbl:'−15%',m:.85},{lbl:'−20%',m:.80}].forEach(function(s){
+      var tr=document.createElement('tr');
+      var cells='<td>'+s.lbl+'</td>';
+      [0,3,6].forEach(function(lc){
+        var p=calcP(avA*s.m,lc,bcPct,mo,base2);
+        var c=p>=700000?'var(--green)':p>=300000?'var(--amber)':'var(--red)';
+        cells+='<td style="color:'+c+';font-weight:600">'+fmtK(p)+'</td>';
+      });
+      tr.innerHTML=cells;sb.appendChild(tr);
+    });
+  }
+}
+
+</script>
+</body>
+</html>
