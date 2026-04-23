@@ -1045,9 +1045,13 @@ function renderLender(){
 }
 
 </script>
- <script>
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   Auto-save v2 — instant save on locks/toggles, debounced on typing,
+   beforeunload safety net, defensive lock restore.
+   ════════════════════════════════════════════════════════════════════ */
 (function(){
-  var KEY = 'rlg_alvarado_state_v1';
+  var KEY = 'rlg_alvarado_state_v2';
   var DEBOUNCE_MS = 400;
   var saveTimer = null;
   var indicator = null;
@@ -1064,24 +1068,33 @@ function renderLender(){
       bcPct:  typeof window.bcPct  !== 'undefined' ? window.bcPct  : null,
       exIH:   typeof window.exIH   !== 'undefined' ? window.exIH   : null,
       D:      window.D     ? { setup: window.D.setup, dev: window.D.dev, reno: window.D.reno } : null,
-      locked: window.locked || null,
+      locked: window.locked ? JSON.parse(JSON.stringify(window.locked)) : null,
       ts:     Date.now()
     };
+  }
+
+  function writeNow(){
+    if(suppressSave) return;
+    try {
+      var data = snapshot();
+      localStorage.setItem(KEY, JSON.stringify(data));
+      showSaved(data.ts);
+    } catch(e){
+      console.error('[autosave] save failed:', e);
+      showError();
+    }
   }
 
   function save(){
     if(suppressSave) return;
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(function(){
-      try {
-        var data = snapshot();
-        localStorage.setItem(KEY, JSON.stringify(data));
-        showSaved(data.ts);
-      } catch(e){
-        console.error('[autosave] save failed:', e);
-        showError();
-      }
-    }, DEBOUNCE_MS);
+    saveTimer = setTimeout(writeNow, DEBOUNCE_MS);
+  }
+
+  function saveNow(){
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    writeNow();
   }
 
   function load(){
@@ -1096,28 +1109,38 @@ function renderLender(){
         if(el) el.value = data.inputs[id];
       });
 
-      if(data.lcPct !== null && typeof window.setLC === 'function')   window.setLC(data.lcPct);
-      if(data.bcPct !== null && typeof window.setBC === 'function')   window.setBC(data.bcPct);
-      if(data.exIH  !== null && typeof window.setExIH === 'function') window.setExIH(data.exIH);
+      try { if(data.lcPct !== null && typeof window.setLC === 'function')   window.setLC(data.lcPct);   } catch(e){ console.error('[autosave] setLC restore failed:', e); }
+      try { if(data.bcPct !== null && typeof window.setBC === 'function')   window.setBC(data.bcPct);   } catch(e){ console.error('[autosave] setBC restore failed:', e); }
+      try { if(data.exIH  !== null && typeof window.setExIH === 'function') window.setExIH(data.exIH);  } catch(e){ console.error('[autosave] setExIH restore failed:', e); }
 
       if(data.D && window.D){
         ['setup','dev','reno'].forEach(function(k){
           if(Array.isArray(data.D[k])) window.D[k] = data.D[k];
         });
-        if(typeof window.renderLI === 'function'){
-          window.renderLI('setup');
-          window.renderLI('dev');
-          window.renderLI('reno');
-        }
+        try {
+          if(typeof window.renderLI === 'function'){
+            window.renderLI('setup');
+            window.renderLI('dev');
+            window.renderLI('reno');
+          }
+        } catch(e){ console.error('[autosave] renderLI failed:', e); }
       }
 
-      if(data.locked && window.locked && typeof window.toggleLock === 'function'){
+      if(data.locked && window.locked){
         Object.keys(data.locked).forEach(function(sid){
-          if(data.locked[sid] && !window.locked[sid]) window.toggleLock(sid);
+          if(!data.locked[sid]) return;
+          if(window.locked[sid]) return;
+          try {
+            window.locked[sid] = true;
+            if(typeof window.applyLock === 'function') window.applyLock(sid);
+          } catch(e){
+            console.error('[autosave] lock restore failed for', sid, e);
+          }
         });
       }
 
-      if(typeof window.go === 'function') window.go();
+      try { if(typeof window.go === 'function') window.go(); } catch(e){ console.error('[autosave] go() failed:', e); }
+
       showSaved(data.ts);
       return true;
     } catch(e){
@@ -1190,25 +1213,39 @@ function renderLender(){
     document.body.appendChild(indicator);
   }
 
-  function wrapFn(name){
+  function wrapFn(name, immediate){
     var orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = function(){
       var r = orig.apply(this, arguments);
-      save();
+      if(immediate) saveNow(); else save();
       return r;
     };
   }
 
   function init(){
     buildIndicator();
+
     document.addEventListener('input',  save, true);
     document.addEventListener('change', save, true);
-    wrapFn('setLC');
-    wrapFn('setBC');
-    wrapFn('setExIH');
-    wrapFn('addLI');
-    wrapFn('toggleLock');
+
+    wrapFn('setLC',      true);
+    wrapFn('setBC',      true);
+    wrapFn('setExIH',    true);
+    wrapFn('addLI',      true);
+    wrapFn('toggleLock', true);
+
+    window.addEventListener('beforeunload', function(){
+      if(saveTimer){
+        try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch(e){}
+      }
+    });
+    window.addEventListener('pagehide', function(){
+      if(saveTimer){
+        try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch(e){}
+      }
+    });
+
     var restored = load();
     if(!restored) save();
   }
@@ -1219,6 +1256,6 @@ function renderLender(){
     window.addEventListener('load', init);
   }
 })();
-</script> 
+</script>
 </body>
 </html>
